@@ -184,16 +184,16 @@ internal class _XMLElement {
         return node
     }
     
-    func toXMLString(with header: XMLHeader? = nil, withCDATA cdata: Bool, ignoreEscaping: Bool = false) -> String {
+    func toXMLString(with header: XMLHeader? = nil, withCDATA cdata: Bool, ignoreEscaping: Bool = false, printPretty: Bool = false) -> String {
         if let header = header, let headerXML = header.toXML() {
-            return headerXML + _toXMLString(withCDATA: cdata)
+            return headerXML + _toXMLString(indented: 0, withCDATA: cdata, ignoreEscaping: ignoreEscaping, printPretty: printPretty)
         } else {
-            return _toXMLString(withCDATA: cdata)
+            return _toXMLString(indented: 0, withCDATA: cdata, ignoreEscaping: ignoreEscaping, printPretty: printPretty)
         }
     }
     
-    fileprivate func _toXMLString(indented level: Int = 0, withCDATA cdata: Bool, ignoreEscaping: Bool = false) -> String {
-        var string = String(repeating: " ", count: level * 4)
+    fileprivate func _toXMLString(indented level: Int = 0, withCDATA cdata: Bool, ignoreEscaping: Bool = false, printPretty: Bool = false) -> String {
+        var string = printPretty ? String(repeating: " ", count: level * 4) : ""
         string += "<\(key)"
         
         for (key, value) in attributes {
@@ -209,16 +209,17 @@ internal class _XMLElement {
             }
             string += "</\(key)>"
         } else if !children.isEmpty {
-            string += ">\n"
+            string += ">"
+            if printPretty { string += "\n" }
             
             for childElement in children {
                 for child in childElement.value {
-                    string += child._toXMLString(indented: level + 1, withCDATA: cdata)
-                    string += "\n"
+                    string += child._toXMLString(indented: level + 1, withCDATA: cdata, ignoreEscaping: ignoreEscaping, printPretty: printPretty)
+                    if printPretty { string += "\n" }
                 }
             }
             
-            string += String(repeating: " ", count: level * 4)
+            if printPretty { string += String(repeating: " ", count: level * 4) }
             string += "</\(key)>"
         } else {
             string += " />"
