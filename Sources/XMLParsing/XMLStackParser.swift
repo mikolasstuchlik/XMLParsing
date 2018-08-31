@@ -20,11 +20,11 @@ public struct XMLHeader {
     /// indicates whetehr a document relies on information from an external source.
     var standalone: String? = nil
     
-    init(version: Double? = nil) {
+    public init(version: Double? = nil) {
         self.version = version
     }
     
-    init(version: Double?, encoding: String?, standalone: String? = nil) {
+    public init(version: Double?, encoding: String?, standalone: String? = nil) {
         self.version = version
         self.encoding = encoding
         self.standalone = standalone
